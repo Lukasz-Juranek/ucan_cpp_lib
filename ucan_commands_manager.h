@@ -5,10 +5,10 @@
 
 using namespace std;
 
-//class Iucan_sendable {
-//public:
-//  virtual string send();
-//};
+class Iucan_sendable {
+public:
+  virtual string send(){return "error";};
+};
 
 class ucan_commands_manager
 {
