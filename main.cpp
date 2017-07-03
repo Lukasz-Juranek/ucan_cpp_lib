@@ -19,13 +19,13 @@ TEST_CASE("uCAN Stepper command creatation", "[stepper]") {
 
   ucan_stepper::cmd c =
       ucan_stepper::cmd(ucan_stepper::cmd::rotate_anti_clockwhise, 10, 10ms);
-  REQUIRE(c.send() == "Frame101");
+  REQUIRE(c.toString() == "Frame101");
 }
 
 TEST_CASE("uCAN Stepper sending", "[stepper]") {
   ucan_stepper s = ucan_stepper(7);
   s.add(ucan_stepper::cmd::rotate_anti_clockwhise, 10, 10ms);
   s.add(ucan_stepper::cmd::rotate_anti_clockwhise, 12, 10ms);
-  REQUIRE(s.get_command_in_queue(0).send() == "Frame101");
-  REQUIRE(s.get_command_in_queue(1).send() == "Frame121");
+  REQUIRE(s.get_command_in_queue(0).toString() == "Frame101");
+  REQUIRE(s.get_command_in_queue(1).toString() == "Frame121");
 }
