@@ -17,21 +17,23 @@ public:
       rotate_clockwhise,
       rotate_anti_clockwhise,
     };
-    cmd(ucan_stepper::cmd::name command_name, int parameter,
-        std::chrono::milliseconds timeout)
-        : n(command_name), p(parameter), t(timeout) {}
+    cmd(ucan_stepper::cmd::name _command_name, int _parameter,
+        std::chrono::milliseconds _timeout, int _count)
+        : command_name(_command_name), parameter(_parameter), timeout(_timeout),
+          count(_count) {}
 
   private:
-    name n;
-    int p;
-    std::chrono::milliseconds t;
+    name command_name;
+    int parameter;
+    int count;
+    std::chrono::milliseconds timeout;
   };
 
   ucan_stepper(int id);
   void execute();
   int get_id();
-  ucan_stepper &add(ucan_stepper::cmd::name c, int stepNumber,
-                    std::chrono::milliseconds timeount_ms);
+  ucan_stepper &add(ucan_stepper::cmd::name command_name, int number_of_steps,
+                    std::chrono::milliseconds timeount_ms, int count);
   cmd get_command_in_queue(int i) { return command_queue[i]; };
 
 private:
