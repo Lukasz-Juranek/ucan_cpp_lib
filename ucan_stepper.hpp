@@ -1,5 +1,0 @@
-#ifndef UCAN_STEPPER_HPP
-#define UCAN_STEPPER_HPP
-
-#endif // UCAN_STEPPER_HPP
-

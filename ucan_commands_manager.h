@@ -34,12 +34,13 @@ private:
 
 template <class T> class ucan_commands_manager {
 private:
+  int device_id;
   thread send_thread;
-  static void manage_commands(deque<Iucan_sendable> _command_queue);
+  static void manage_commands(int device_id, deque<Iucan_sendable> command_queue);
 
 public:
-  ucan_commands_manager(){};
-  void start(deque<T> t_command);
+  ucan_commands_manager() {}
+  void start(deque<T> t_command, int _device_id);
   void stop() {
     if (this->send_thread
             .joinable()) // wait for thread to finish befone making new one
@@ -47,12 +48,14 @@ public:
       this->send_thread.join();
     }
   };
-  ~ucan_commands_manager() { this->stop(); };
+  ~ucan_commands_manager() { this->stop(); }
   ucan_commands_manager(ucan_commands_manager &&) = default;
 };
 
-template <class T> void ucan_commands_manager<T>::start(deque<T> t_command) {
+template <class T>
+void ucan_commands_manager<T>::start(deque<T> t_command, int _device_id) {
 
+  this->device_id = _device_id;
   BOOST_LOG_TRIVIAL(trace) << "ucan_command_manager execute ";
 
   // stop previouse thread before making new one
@@ -64,23 +67,23 @@ template <class T> void ucan_commands_manager<T>::start(deque<T> t_command) {
     command_queue.push_back(i.send());
   }
   // start sending thread
-  thread t(ucan_commands_manager::manage_commands, command_queue);
+  thread t(ucan_commands_manager::manage_commands, this->device_id,
+           command_queue);
   send_thread = std::move(t);
 }
 
 template <class T>
 void ucan_commands_manager<T>::manage_commands(
-    deque<Iucan_sendable> command_queue) {
+    int device_id, deque<Iucan_sendable> command_queue) {
   while (command_queue.size() > 0) {
 
     auto f = &command_queue[0];
-    if (f->command_expired())
-    {
-        command_queue.pop_front();
+    if (f->command_expired()) {
+      command_queue.pop_front();
     }
 
     std::this_thread::sleep_for(f->get_timeout());
-    BOOST_LOG_TRIVIAL(trace) << f->toString();
+    BOOST_LOG_TRIVIAL(trace) << device_id << " : " << f->toString();
   }
 }
 
