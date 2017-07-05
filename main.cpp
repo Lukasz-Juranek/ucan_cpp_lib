@@ -25,17 +25,19 @@ TEST_CASE("uCAN Stepper command creatation", "[stepper]") {
 
 TEST_CASE("uCAN Stepper toString", "[stepper]") {
   ucan_stepper s = ucan_stepper(7);
-  s.add(ucan_stepper::cmd::rotate_anti_clockwhise, 10, 10ms, 1);
-  s.add(ucan_stepper::cmd::rotate_anti_clockwhise, 12, 10ms, 1);
+
+  s.add(ucan_stepper::cmd(ucan_stepper::cmd::rotate_anti_clockwhise, 10, 10ms, 1));
+  s.add(ucan_stepper::cmd(ucan_stepper::cmd::rotate_anti_clockwhise, 12, 10ms, 1));
   REQUIRE(s.get_command_in_queue(0).toString() == "Frame101");
   REQUIRE(s.get_command_in_queue(1).toString() == "Frame121");
 }
 
 TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
   ucan_stepper s = ucan_stepper(7);
-  s.add(ucan_stepper::cmd::rotate_anti_clockwhise, 10, 10ms, 3);
-  s.add(ucan_stepper::cmd::rotate_anti_clockwhise, 12, 100ms, 5);
+  s.add(ucan_stepper::cmd(ucan_stepper::cmd::rotate_anti_clockwhise, 10, 10ms, 3));
+  s.add(ucan_stepper::cmd(ucan_stepper::cmd::rotate_anti_clockwhise, 14, 100ms, 5));
   s.execute();
 
   std::this_thread::sleep_for(2s);
 }
+

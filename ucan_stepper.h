@@ -6,34 +6,46 @@
 #include <deque>
 #include <string>
 
+class common_cmd {
+public:
+  Iucan_sendable send();
+  string toString();
+  common_cmd(std::chrono::milliseconds _timeout, int _count)
+      : count(_count), timeout(_timeout){};
+
+protected:
+  int count;
+  std::chrono::milliseconds timeout;
+};
+
 class ucan_stepper {
 
 public:
-  class cmd {
+  class cmd : public common_cmd {
   public:
-    Iucan_sendable send();
-    string toString();
     enum name {
       rotate_clockwhise,
       rotate_anti_clockwhise,
     };
+
     cmd(ucan_stepper::cmd::name _command_name, int _parameter,
         std::chrono::milliseconds _timeout, int _count)
-        : command_name(_command_name), parameter(_parameter), timeout(_timeout),
-          count(_count) {}
+        : parameter(_parameter), command_name(_command_name),
+          common_cmd(_timeout, _count) {}
+
+    Iucan_sendable send();
+    string toString();
 
   private:
     name command_name;
     int parameter;
-    int count;
-    std::chrono::milliseconds timeout;
   };
 
+public:
   ucan_stepper(int id);
   void execute();
   int get_id();
-  ucan_stepper &add(ucan_stepper::cmd::name command_name, int number_of_steps,
-                    std::chrono::milliseconds timeount_ms, int count);
+  ucan_stepper &add(ucan_stepper::cmd command);
   cmd get_command_in_queue(int i) { return command_queue[i]; };
 
 private:

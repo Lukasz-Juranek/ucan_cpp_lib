@@ -22,11 +22,7 @@ string ucan_stepper::cmd::toString() {
   return st.str();
 };
 
-ucan_stepper &ucan_stepper::add(ucan_stepper::cmd::name command_name,
-                                int number_of_steps,
-                                std::chrono::milliseconds timeount_ms,
-                                int count) {
-  this->command_queue.push_back(
-      ucan_stepper::cmd(command_name, number_of_steps, timeount_ms, count));
+ucan_stepper &ucan_stepper::add(ucan_stepper::cmd command) {
+  this->command_queue.push_back(command);
   return *this;
 }
