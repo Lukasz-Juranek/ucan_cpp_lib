@@ -80,13 +80,13 @@ void ucan_commands_manager<T>::manage_commands(
     uCANnetID device_id, deque<Iucan_sendable> command_queue) {
   while (command_queue.size() > 0) {
 
-    auto f = &command_queue[0];
-    if (f->command_expired()) {
+    auto f = command_queue[0];
+    if (command_queue[0].command_expired()) {
       command_queue.pop_front();
     }
 
-    std::this_thread::sleep_for(f->get_timeout());
-    BOOST_LOG_TRIVIAL(trace) << std::hex << (int)device_id.whole << " : " << f->toString();
+    std::this_thread::sleep_for(f.get_timeout());
+    BOOST_LOG_TRIVIAL(trace) << std::hex << (int)device_id.whole << " : " << f.toString();
   }
 }
 
