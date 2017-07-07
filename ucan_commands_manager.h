@@ -59,7 +59,7 @@ template <class T>
 void ucan_commands_manager<T>::start(deque<T> t_command, uCANnetID _device_id) {
 
   this->device_id = _device_id;
-  BOOST_LOG_TRIVIAL(trace) << "ucan_command_manager execute ";
+  BOOST_LOG_TRIVIAL(trace) << "ucan_command_manager execute " << std::hex << (int)this->device_id.id;
 
   // stop previouse thread before making new one
   this->stop();
@@ -86,7 +86,7 @@ void ucan_commands_manager<T>::manage_commands(
     }
 
     std::this_thread::sleep_for(f.get_timeout());
-    BOOST_LOG_TRIVIAL(trace) << std::hex << (int)device_id.whole << " : " << f.toString();
+    BOOST_LOG_TRIVIAL(trace) << device_id.toString() << ":" << f.toString();
   }
 }
 

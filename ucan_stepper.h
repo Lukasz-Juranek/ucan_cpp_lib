@@ -53,11 +53,13 @@ public:
   Iucan_sendable send() {
     return Iucan_sendable(this->toString(), this->timeout, this->count);
   }
+
   string toString() {
     std::ostringstream st;
-    st << "Stepper ";
+//    st << "Stepper ";
     for (int i = 0; i < sizeof(CMD1Data.data); ++i) {
-      st << std::hex << (int)CMD1Data.data[i];
+      auto tmp = CMD1Data.data[i];
+      st << std::setfill('0')<< std::setw(2) << std::hex << (int)tmp;
     }
     return st.str();
   }

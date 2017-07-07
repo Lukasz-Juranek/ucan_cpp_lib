@@ -18,15 +18,17 @@ TEST_CASE("uCAN Stepper driver creation", "[stepper]") {
 
 TEST_CASE("uCAN Stepper command creatation", "[stepper]") {
   ucan_stepper c = ucan_stepper(
-      {ucan_stepper::micro16, ucan_stepper::rotate_clockwhise, 0, 10}, 10ms, 3);
-  REQUIRE(c.toString() == "Stepper100");
+      {ucan_stepper::micro16, ucan_stepper::rotate_clockwhise, 0, 254}, 10ms, 3);
+  REQUIRE(c.toString() == "04010000fe000000");
+
+
 }
 
 TEST_CASE("uCAN Line motor command creatation", "[line_motor]") {
 
   ucan_line_motor::CANBrushedCMD1 cmd{{100, 0}};
   ucan_line_motor c = ucan_line_motor(cmd, 10ms, 3);
-  REQUIRE(c.toString() == "Line102");
+  REQUIRE(c.toString() == "6400000000000000");
 }
 
 TEST_CASE("uCAN Stepper toString", "[stepper]") {
@@ -37,7 +39,7 @@ TEST_CASE("uCAN Stepper toString", "[stepper]") {
 
   s.add(ucan_stepper(cmd, 10ms, 1));
 
-  REQUIRE(s.get_command_in_queue(0).toString() == "Stepper100");
+  REQUIRE(s.get_command_in_queue(0).toString() == "0401000064000000");
 }
 
 TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
