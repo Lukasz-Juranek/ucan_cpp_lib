@@ -26,7 +26,7 @@ public:
     micro32 = 5
   } tMicrostepsCount;
 
-  static const int driver_id = MOTOR_DRIVER_ID_LINE;
+  static const int driver_id = MOTOR_DRIVER_ID_STEPPER;
   static const int command_id = STEPPER_STEP_CMD__ID;
 
   typedef struct tCANStepperCMD1 {
@@ -51,15 +51,17 @@ public:
       : CMD1Data(command), common_ucan_cmd(_timeout, _count) {}
 
   Iucan_sendable send() {
-    return Iucan_sendable(this->toString(), this->timeout, this->count);
+    can_frame c;
+    c.can_dlc = sizeof(CMD1Data.data);
+    memcpy(c.data, CMD1Data.data, c.can_dlc);
+    return Iucan_sendable(c, this->timeout, this->count);
   }
 
-  string toString() {
+  std::string toString() {
     std::ostringstream st;
-//    st << "Stepper ";
     for (int i = 0; i < sizeof(CMD1Data.data); ++i) {
       auto tmp = CMD1Data.data[i];
-      st << std::setfill('0')<< std::setw(2) << std::hex << (int)tmp;
+      st << std::setfill('0') << std::setw(2) << std::hex << (int)tmp;
     }
     return st.str();
   }

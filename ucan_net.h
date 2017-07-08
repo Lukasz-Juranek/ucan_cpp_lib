@@ -24,6 +24,8 @@ public:
     return st.str();
   }
 
+  uint32_t get_whole(){return this->whole;}
+
 } uCANnetID;
 
 #include <string>

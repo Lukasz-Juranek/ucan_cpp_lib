@@ -6,7 +6,7 @@
 #include <chrono>
 #include <deque>
 #include <string>
-
+#include <linux/can.h>
 // ------------ device types ------------------
 
 #define MOTOR_DRIVER_ID_STEPPER 5
@@ -20,11 +20,12 @@
 class common_ucan_cmd {
 public:
   Iucan_sendable send();
-  string toString();
+  std::string toString();
   common_ucan_cmd(std::chrono::milliseconds _timeout, int _count)
       : count(_count), timeout(_timeout) {}
 
 protected:
+  can_frame frame;
   int count;
   std::chrono::milliseconds timeout;
 };
@@ -32,7 +33,9 @@ protected:
 template <class T> class ucan_device{
 public:
     ucan_device(int device_id) : ucan_net_id({T::driver_id, T::command_id, device_id, 0 ,0, 0}) {}
-  void execute() { this->mngr.start(this->command_queue, this->ucan_net_id); }
+  void execute() {
+      this->mngr.start(this->command_queue, this->ucan_net_id);
+  }
   int get_id() { return ucan_net_id.id; }
   void add(T command) {
     this->command_queue.push_back(command);
@@ -41,7 +44,7 @@ public:
 
 private:
   uCANnetID ucan_net_id;
-  deque<T> command_queue;
+  std::deque<T> command_queue;
   ucan_commands_manager<T> mngr;
 };
 

@@ -39,14 +39,16 @@ public:
       : CMD1Data(_command), common_ucan_cmd(_timeout, _count) {}
 
   Iucan_sendable send() {
-    return Iucan_sendable(this->toString(), this->timeout, this->count);
+    can_frame c;
+    c.can_dlc = sizeof(CMD1Data.data);
+    memcpy(c.data, CMD1Data.data, c.can_dlc);
+    return Iucan_sendable(c, this->timeout, this->count);
   }
-  string toString() {
+  std::string toString() {
     std::ostringstream st;
-//    st << "Line ";
     for (int i = 0; i < sizeof(CMD1Data.data); ++i) {
       auto tmp = CMD1Data.data[i];
-      st << std::setfill('0')<< std::setw(2) << std::hex << (int)tmp;
+      st << std::setfill('0') << std::setw(2) << std::hex << (int)tmp;
     }
     return st.str();
   }

@@ -20,8 +20,6 @@ TEST_CASE("uCAN Stepper command creatation", "[stepper]") {
   ucan_stepper c = ucan_stepper(
       {ucan_stepper::micro16, ucan_stepper::rotate_clockwhise, 0, 254}, 10ms, 3);
   REQUIRE(c.toString() == "04010000fe000000");
-
-
 }
 
 TEST_CASE("uCAN Line motor command creatation", "[line_motor]") {
