@@ -6,6 +6,8 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <linux/can.h>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -13,7 +15,7 @@ using namespace std::chrono_literals;
 
 TEST_CASE("uCAN Stepper driver creation", "[stepper]") {
   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(7);
-  REQUIRE(s.get_id() == 7);
+  REQUIRE(s.get_id().id == 7);
 }
 
 TEST_CASE("uCAN Stepper command creatation", "[stepper]") {
@@ -56,4 +58,14 @@ TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
   l.execute();
 
   std::this_thread::sleep_for(1s);
+}
+
+TEST_CASE("Recive CAN Frame", "[rx]"){
+   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(7);
+   can_frame c;
+   auto id = s.get_id();
+   s.recive_frame(&c, MOTOR_CONTROL_FRAME_ID);
+   std::this_thread::sleep_for(1s);
+   printf("CAN_ID %08x \n\r", c.can_id);
+   std::this_thread::sleep_for(1s);
 }

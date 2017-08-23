@@ -44,6 +44,9 @@ public:
     memcpy(c.data, CMD1Data.data, c.can_dlc);
     return Iucan_sendable(c, this->timeout, this->count);
   }
+
+
+
   std::string toString() {
     std::ostringstream st;
     for (int i = 0; i < sizeof(CMD1Data.data); ++i) {
@@ -56,29 +59,29 @@ public:
 private:
   CANBrushedCMD1 CMD1Data;
 
-  //  typedef struct tCANStatusFrame1 {
-  //    union {
-  //      struct {
-  //        union {
-  //          struct {
-  //            uint16_t Speed;
-  //            uint16_t Position;
-  //          };
-  //          uint32_t whole;
-  //        } sensors;
+//    typedef struct tCANStatusFrame1 {
+//      union {
+//        struct {
+//          union {
+//            struct {
+//              uint16_t Speed;
+//              uint16_t Position;
+//            };
+//            uint32_t whole;
+//          } sensors;
 
-  //        union {
-  //          struct {
-  //            uint32_t state : 3; // running, braking
-  //            uint32_t dir : 1;
-  //            uint32_t pwmValue : 16;
-  //          };
-  //          uint32_t whole;
-  //        } brushed;
-  //      };
-  //      uint8_t data[8];
-  //    };
-  //  } CANStatusFrame1;
+//          union {
+//            struct {
+//              uint32_t state : 3; // running, braking
+//              uint32_t dir : 1;
+//              uint32_t pwmValue : 16;
+//            };
+//            uint32_t whole;
+//          } brushed;
+//        };
+//        uint8_t data[8];
+//      };
+//    } CANStatusFrame1;
 };
 
 #endif // UCAN_LINE_MOTOR_H

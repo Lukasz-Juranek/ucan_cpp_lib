@@ -32,11 +32,18 @@ protected:
 
 template <class T> class ucan_device{
 public:
-    ucan_device(int device_id) : ucan_net_id({T::driver_id, T::command_id, device_id, 0 ,0, 0}) {}
+    ucan_device(int device_id) : ucan_net_id({T::driver_id, T::command_id, device_id, 0 ,0, 0}) {
+
+    }
   void execute() {
       this->mngr.start(this->command_queue, this->ucan_net_id);
   }
-  int get_id() { return ucan_net_id.id; }
+
+  void recive_frame(can_frame *buffer, uint8_t _ucan_net_type){
+      this->mngr.start_rx(_ucan_net_type, buffer);
+  }
+
+  uCANnetID get_id() { return ucan_net_id; }
   void add(T command) {
     this->command_queue.push_back(command);
   }

@@ -16,7 +16,6 @@ typedef union {
 public:
   std::string toString() {
     std::ostringstream st;
-    //    st << "Line ";
     for (int i = 0; i < sizeof(this->whole); ++i) {
       auto tmp = ((uint8_t *)&this->whole)[i];
       st << std::setfill('0') << std::setw(2) << std::hex << (int)tmp;

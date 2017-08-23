@@ -46,6 +46,37 @@ public:
     }
   }
 
+  uint8_t can_rx(can_frame *frame_rd) {
+
+    int recvbytes = 0;
+    struct timeval timeout = {1, 0};
+    fd_set readSet;
+    FD_ZERO(&readSet);
+    FD_SET(ucan_can_interface::interface_id, &readSet);
+
+    if (select((ucan_can_interface::interface_id + 1), &readSet, NULL, NULL, &timeout) >= 0) {
+      if (FD_ISSET(ucan_can_interface::interface_id, &readSet)) {
+        recvbytes = read(ucan_can_interface::interface_id, frame_rd, sizeof(struct can_frame));
+        if (recvbytes) {
+          return 1;
+        }
+      }
+    }
+    return -1;
+  }
+
+
+  void set_filter(canid_t id, canid_t mask)
+  {
+      //Add new filter on can-id 0x123
+        struct can_filter rfilter[1];
+      //   rfilter[0].can_id   = 0x80000123;
+         rfilter[0].can_id   = id;
+         rfilter[0].can_mask = mask;
+         setsockopt(ucan_can_interface::interface_id, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+  }
+
+
   void can_send(can_frame frame) {
     std::lock_guard<std::mutex> lock(ucan_can_interface::socket_mutex);
     int nbytes;
@@ -53,7 +84,7 @@ public:
     frame.can_id |= CAN_EFF_FLAG;
     nbytes = write(ucan_can_interface::interface_id, &frame,
                    sizeof(struct can_frame));
-    printf("Wrote %d bytes\n", nbytes);
+    //    printf("Wrote %d bytes\n", nbytes);
     //    return nbytes;
   }
 };

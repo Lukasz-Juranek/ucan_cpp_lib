@@ -3,13 +3,14 @@
 
 #include "ucan_can_interface.h"
 #include "ucan_common.h"
-#include <boost/log/trivial.hpp>
 #include <chrono>
 #include <deque>
 #include <iostream>
 #include <linux/can.h>
 #include <string>
 #include <thread>
+
+using namespace std::chrono_literals;
 
 class Iucan_sendable {
 public:
@@ -48,21 +49,42 @@ template <class T> class ucan_commands_manager {
 private:
   uCANnetID device_id;
   std::thread send_thread;
+  std::thread rx_thread;
+  bool rx_stop;
   static void manage_commands(uCANnetID device_id,
                               std::deque<Iucan_sendable> command_queue);
+  static void rx_data(uCANnetID device_id, can_frame *buffer,bool *stop);
 
 public:
-  ucan_commands_manager() {}
+  ucan_commands_manager() {
+  }
+  void start_rx(uint8_t _type, can_frame* buffer){
+      rx_stop = false;
+      uCANnetID d_id = this->device_id;
+      d_id.frame_type = _type;
+      std::thread t2(ucan_commands_manager::rx_data, d_id, buffer, &(this->rx_stop));
+      rx_thread = std::move(t2);
+  }
+
   void start(std::deque<T> t_command, uCANnetID _device_id);
   void stop() {
+
     if (this->send_thread
             .joinable()) // wait for thread to finish befone making new one
     {
       this->send_thread.join();
     }
+    if (this->rx_thread
+            .joinable()) // wait for thread to finish befone making new one
+    {
+      rx_stop = true;
+      this->rx_thread.join();
+    }
   }
 
-  ~ucan_commands_manager() { this->stop(); }
+  ~ucan_commands_manager() {
+      this->stop();
+  }
   ucan_commands_manager(ucan_commands_manager &&) = default;
 };
 
@@ -71,8 +93,8 @@ void ucan_commands_manager<T>::start(std::deque<T> t_command,
                                      uCANnetID _device_id) {
 
   this->device_id = _device_id;
-  BOOST_LOG_TRIVIAL(trace) << "ucan_command_manager execute " << std::hex
-                           << (int)this->device_id.id;
+  //  BOOST_LOG_TRIVIAL(trace) << "ucan_command_manager execute " << std::hex
+  //                           << (int)this->device_id.id;
 
   // stop previouse thread before making new one
   this->stop();
@@ -85,7 +107,22 @@ void ucan_commands_manager<T>::start(std::deque<T> t_command,
   // start sending thread
   std::thread t(ucan_commands_manager::manage_commands, this->device_id,
                 command_queue);
+
   send_thread = std::move(t);
+}
+
+template <class T>
+void ucan_commands_manager<T>::rx_data(
+    uCANnetID device_id, can_frame* buffer,bool *stop) {
+
+     ucan_can_interface can_sock = ucan_can_interface("vcan0");
+        //ll to do plus bit extended ?
+     can_sock.set_filter(device_id.whole,CAN_EFF_MASK);
+     while (1){
+        if (*stop) break;
+        can_sock.can_rx(buffer);
+        std::this_thread::sleep_for(10ms);
+     }
 }
 
 template <class T>
@@ -106,7 +143,8 @@ void ucan_commands_manager<T>::manage_commands(
     frame.can_id = device_id.get_whole();
 
     can_sock.can_send(frame);
-    BOOST_LOG_TRIVIAL(trace) << device_id.toString() << ":" << f.toString();
+    //    BOOST_LOG_TRIVIAL(trace) << device_id.toString() << ":" <<
+    //    f.toString();
   }
 }
 
