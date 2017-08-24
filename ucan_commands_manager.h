@@ -58,11 +58,9 @@ private:
 public:
   ucan_commands_manager() {
   }
-  void start_rx(uint8_t _type, can_frame* buffer){
+  void start_rx(uCANnetID _id, can_frame* buffer){
       rx_stop = false;
-      uCANnetID d_id = this->device_id;
-      d_id.frame_type = _type;
-      std::thread t2(ucan_commands_manager::rx_data, d_id, buffer, &(this->rx_stop));
+      std::thread t2(ucan_commands_manager::rx_data, _id, buffer, &(this->rx_stop));
       rx_thread = std::move(t2);
   }
 

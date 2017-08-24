@@ -40,7 +40,10 @@ public:
   }
 
   void recive_frame(can_frame *buffer, uint8_t _ucan_net_type){
-      this->mngr.start_rx(_ucan_net_type, buffer);
+
+      uCANnetID d_id = this->get_id();
+      d_id.frame_type = _ucan_net_type;
+      this->mngr.start_rx(d_id, buffer);
   }
 
   uCANnetID get_id() { return ucan_net_id; }

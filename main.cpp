@@ -61,7 +61,7 @@ TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
 }
 
 TEST_CASE("Recive CAN Frame", "[rx]"){
-   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(7);
+   ucan_device<ucan_line_motor> s = ucan_device<ucan_line_motor>(5);
    can_frame c;
    auto id = s.get_id();
    s.recive_frame(&c, MOTOR_CONTROL_FRAME_ID);
