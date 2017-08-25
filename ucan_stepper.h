@@ -28,6 +28,7 @@ public:
 
   static const int driver_id = MOTOR_DRIVER_ID_STEPPER;
   static const int command_id = STEPPER_STEP_CMD__ID;
+  static const int status_frame_id = MOTOR_CONTROL_FRAME_ID;
 
   typedef struct tCANStepperCMD1 {
     union {
@@ -45,6 +46,30 @@ public:
       uint8_t data[8];
     };
   } CANStepperCMD1;
+
+  typedef struct tCANStatusFrame1 {
+    union {
+      struct {
+        union {
+          struct {
+            uint16_t Speed;
+            uint16_t Position;
+          };
+          uint32_t whole;
+        } sensors;
+
+        union {
+          struct {
+            uint32_t nowStepping : 1;
+            uint32_t StepCount : 31;
+          };
+          uint32_t whole;
+        } stepper;
+      };
+      uint8_t data[8];
+    };
+  } CANStatusFrame1;
+
 
   ucan_stepper(CANStepperCMD1 command, std::chrono::milliseconds _timeout,
                int _count)
@@ -67,31 +92,8 @@ public:
   }
 
 private:
-  CANStepperCMD1 CMD1Data;
 
-  //  typedef struct tCANStatusFrame1 {
-  //    union {
-  //      struct {
-  //        union {
-  //          struct {
-  //            uint16_t Speed;
-  //            uint16_t Position;
-  //          };
-  //          uint32_t whole;
-  //        } sensors;
-
-  //        union {
-  //          struct {
-  //            uint32_t nowStepping : 1;
-  //            uint32_t StepCount : 31;
-  //          };
-  //          uint32_t whole;
-  //        } stepper;
-  //      };
-  //      uint8_t data[8];
-  //    };
-  //  } CANStatusFrame1;
-  //  CANStatusFrame1 status;
+  CANStepperCMD1 CMD1Data;  
 };
 
 #endif // UCAN_STEPPER_H

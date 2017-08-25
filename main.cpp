@@ -30,7 +30,6 @@ TEST_CASE("uCAN Line motor command creatation", "[line_motor]") {
   ucan_line_motor c = ucan_line_motor(cmd, 10ms, 3);
   REQUIRE(c.toString() == "6400000000000000");
 }
-
 TEST_CASE("uCAN Stepper toString", "[stepper]") {
   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(7);
 
@@ -61,11 +60,16 @@ TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
 }
 
 TEST_CASE("Recive CAN Frame", "[rx]"){
-   ucan_device<ucan_line_motor> s = ucan_device<ucan_line_motor>(5);
+   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(15);
    can_frame c;
    auto id = s.get_id();
-   s.recive_frame(&c, MOTOR_CONTROL_FRAME_ID);
+   s.recive_frame(&c, ucan_stepper::status_frame_id);
+
+   ucan_stepper::CANStatusFrame1 status1;
+
    std::this_thread::sleep_for(1s);
+   memcpy(&status1,c.data,sizeof(CAN_MAX_DLEN));
    printf("CAN_ID %08x \n\r", c.can_id);
+   printf("STEPPER_SPEED %08x, POSITION %08x \n\r", status1.sensors.Speed, status1.sensors.Position);
    std::this_thread::sleep_for(1s);
 }

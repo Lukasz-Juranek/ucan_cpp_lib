@@ -32,7 +32,7 @@ protected:
 
 template <class T> class ucan_device{
 public:
-    ucan_device(int device_id) : ucan_net_id({T::driver_id, T::command_id, device_id, 0 ,0, 0}) {
+    ucan_device(int device_id) : ucan_net_id({T::command_id,T::driver_id, device_id, 0 ,0, 0}) {
 
     }
   void execute() {
