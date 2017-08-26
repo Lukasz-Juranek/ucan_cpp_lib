@@ -39,11 +39,11 @@ public:
       this->mngr.start(this->command_queue, this->ucan_net_id);
   }
 
-  void recive_frame(can_frame *buffer, uint8_t _ucan_net_type){
+  void recive_frame(void (*callback_function)(can_frame *buffer), uint8_t _ucan_net_type){
 
       uCANnetID d_id = this->get_id();
       d_id.frame_type = _ucan_net_type;
-      this->mngr.start_rx(d_id, buffer);
+      this->mngr.start_rx(d_id, callback_function);
   }
 
   uCANnetID get_id() { return ucan_net_id; }

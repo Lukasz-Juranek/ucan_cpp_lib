@@ -53,14 +53,14 @@ private:
   bool rx_stop;
   static void manage_commands(uCANnetID device_id,
                               std::deque<Iucan_sendable> command_queue);
-  static void rx_data(uCANnetID device_id, can_frame *buffer,bool *stop);
+  static void rx_data(uCANnetID device_id, void (*callback_function)(can_frame *buffer),bool *stop);
 
 public:
   ucan_commands_manager() {
   }
-  void start_rx(uCANnetID _id, can_frame* buffer){
+  void start_rx(uCANnetID _id, void (*callback_function)(can_frame *buffer)){
       rx_stop = false;
-      std::thread t2(ucan_commands_manager::rx_data, _id, buffer, &(this->rx_stop));
+      std::thread t2(ucan_commands_manager::rx_data, _id, callback_function, &(this->rx_stop));
       rx_thread = std::move(t2);
   }
 
@@ -111,14 +111,17 @@ void ucan_commands_manager<T>::start(std::deque<T> t_command,
 
 template <class T>
 void ucan_commands_manager<T>::rx_data(
-    uCANnetID device_id, can_frame* buffer,bool *stop) {
-
+    uCANnetID device_id, void (*callback_function)(can_frame *buffer),bool *stop)
+{
+     can_frame buffer;
      ucan_can_interface can_sock = ucan_can_interface("vcan0");
-        //ll to do plus bit extended ?
      can_sock.set_filter(device_id.whole,CAN_EFF_MASK);
      while (1){
         if (*stop) break;
-        can_sock.can_rx(buffer);
+        if (can_sock.can_rx(&buffer) == 1)
+        {
+            callback_function(&buffer);
+        }
         std::this_thread::sleep_for(10ms);
      }
 }

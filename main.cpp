@@ -59,17 +59,21 @@ TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
   std::this_thread::sleep_for(1s);
 }
 
+void callback_function(can_frame *buffer)
+{
+    ucan_stepper::CANStatusFrame1 status1;
+    memcpy(&status1,buffer->data,sizeof(CAN_MAX_DLEN));
+    printf("CAN_ID %08x \n\r", buffer->can_id);
+    printf("STEPPER_SPEED %08x, POSITION %08x \n\r", status1.sensors.Speed, status1.sensors.Position);
+}
+
 TEST_CASE("Recive CAN Frame", "[rx]"){
+
+   system("canplayer -I ./candump_p257_s1025 -t -g 100 -l10 &");
+
    ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(15);
-   can_frame c;
+
    auto id = s.get_id();
-   s.recive_frame(&c, ucan_stepper::status_frame_id);
-
-   ucan_stepper::CANStatusFrame1 status1;
-
-   std::this_thread::sleep_for(1s);
-   memcpy(&status1,c.data,sizeof(CAN_MAX_DLEN));
-   printf("CAN_ID %08x \n\r", c.can_id);
-   printf("STEPPER_SPEED %08x, POSITION %08x \n\r", status1.sensors.Speed, status1.sensors.Position);
+   s.recive_frame(callback_function, ucan_stepper::status_frame_id);
    std::this_thread::sleep_for(1s);
 }
