@@ -3,6 +3,7 @@
 #include "catch.hpp"
 #include "ucan_line_motor.h"
 #include "ucan_stepper.h"
+#include "ucan_tools.h"
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -59,12 +60,19 @@ TEST_CASE("uCAN Stepper executing commands", "[stepper]") {
   std::this_thread::sleep_for(1s);
 }
 
+ucan_stepper::CANStatusFrame1 status1;
+uCANnetID status_id;
+
 void callback_function(can_frame *buffer)
 {
-    ucan_stepper::CANStatusFrame1 status1;
     memcpy(&status1,buffer->data,sizeof(CAN_MAX_DLEN));
-    printf("CAN_ID %08x \n\r", buffer->can_id);
-    printf("STEPPER_SPEED %08x, POSITION %08x \n\r", status1.sensors.Speed, status1.sensors.Position);
+    status_id.whole = buffer->can_id;
+//    printf("CAN_ID type %08x \n\r", status_id.type);
+//    printf("CAN_ID id %08x \n\r", status_id.id);
+//    printf("CAN_ID frame_type %08x \n\r", status_id.frame_type);
+
+//    printf("CAN_ID %08x \n\r", buffer->can_id);
+//    printf("STEPPER_SPEED %08x, POSITION %08x \n\r", status1.sensors.Speed, status1.sensors.Position);
 }
 
 TEST_CASE("Recive CAN Frame", "[rx]"){
@@ -76,4 +84,30 @@ TEST_CASE("Recive CAN Frame", "[rx]"){
    auto id = s.get_id();
    s.recive_frame(callback_function, ucan_stepper::status_frame_id);
    std::this_thread::sleep_for(1s);
+
+   REQUIRE(status1.sensors.Speed == 0x00000401);
+   REQUIRE(status1.sensors.Position == 0x00000101);
+   REQUIRE(status_id.id == 15);
+   REQUIRE(status_id.type == MOTOR_DRIVER_ID_STEPPER);
+   REQUIRE(status_id.frame_type == MOTOR_CONTROL_FRAME_ID);
+
+
 }
+
+TEST_CASE("Scan for devices", "[rx]"){
+
+    REQUIRE(ucan_tools::active_devices.size() == 0);
+
+    system("canplayer -I ./candump_p257_s1025 -t -g 10 -l10 &");
+    ucan_tools::scan_for_devices(1);
+
+    REQUIRE(ucan_tools::active_devices.size() == 1);
+//    system("canplayer -I ./candump_p257_s1025 -t -g 10 -l10 &");
+//    ucan_tools::scan_for_devices(1);
+
+//    REQUIRE(ucan_tools::active_devices.size() == 1);
+
+
+}
+
+
