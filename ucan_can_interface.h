@@ -20,13 +20,15 @@ private:
 public:
   ucan_can_interface(const char *ifname) {
 
+      printf("test1");
     if (ucan_can_interface::interface_id == -1) {
       struct sockaddr_can addr;
       struct ifreq ifr;
 
+      printf("test2");
       if ((ucan_can_interface::interface_id =
                socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
-        perror("Error while opening socket");
+        printf("Error while opening socket");
         return;
       }
 
@@ -40,7 +42,7 @@ public:
 
       if (bind(ucan_can_interface::interface_id, (struct sockaddr *)&addr,
                sizeof(addr)) < 0) {
-        perror("Error in socket bind");
+        printf("Error in socket bind");
         return;
       }
     }

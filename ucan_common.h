@@ -32,8 +32,11 @@ protected:
 
 template <class T> class ucan_device{
 public:
-    ucan_device(int device_id) : ucan_net_id({T::command_id,T::driver_id, device_id, 0 ,0, 0}) {
-
+    ucan_device(int device_id) {
+        ucan_net_id.whole = 0;
+        ucan_net_id.frame_type = T::command_id;
+        ucan_net_id.type = T::driver_id;
+        ucan_net_id.id = device_id;
     }
   void execute() {
       this->mngr.start(this->command_queue, this->ucan_net_id);

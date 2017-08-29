@@ -23,13 +23,14 @@ public:
     static void scan_for_devices(int scantime_ms){
         can_frame buffer;
         ucan_can_interface can_sock = ucan_can_interface("vcan0");
-        while ( scantime_ms --)
+        while (scantime_ms)
         {
            if (can_sock.can_rx(&buffer) == 1)
            {
 
                uCANnetID map_id;
                map_id.whole =  buffer.can_id;
+//               printf("SCAN_id %08x \n\r", map_id.whole);
                map_id.frame_type = 0;
                map_id.group = 0;
                map_id.mcast = 0;
@@ -37,7 +38,8 @@ public:
 
                ucan_tools::active_devices[map_id.whole] = {buffer.can_id, time(0)};
            }
-           std::this_thread::sleep_for(1ms);
+//           std::this_thread::sleep_for(1ms);
+           scantime_ms --;
         }
     }
 };

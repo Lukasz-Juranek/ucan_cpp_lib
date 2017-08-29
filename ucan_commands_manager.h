@@ -116,10 +116,16 @@ void ucan_commands_manager<T>::rx_data(
      can_frame buffer;
      ucan_can_interface can_sock = ucan_can_interface("vcan0");
      can_sock.set_filter(device_id.whole,CAN_EFF_MASK);
-     while (1){
-        if (*stop) break;
+     while (1)
+     {
+        if (*stop){
+//            printf("stop");
+            break;
+        }
+//        printf("w");
         if (can_sock.can_rx(&buffer) == 1)
         {
+//            printf("r");
             callback_function(&buffer);
         }
         std::this_thread::sleep_for(10ms);
