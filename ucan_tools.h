@@ -30,7 +30,7 @@ public:
 
                uCANnetID map_id;
                map_id.whole =  buffer.can_id;
-//               printf("SCAN_id %08x \n\r", map_id.whole);
+               printf("SCAN_id %08x \n\r", map_id.whole);
                map_id.frame_type = 0;
                map_id.group = 0;
                map_id.mcast = 0;

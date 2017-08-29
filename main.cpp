@@ -78,7 +78,7 @@ void callback_function(can_frame *buffer)
 }
 
 TEST_CASE("Recive CAN Frame", "[rx]"){
-//   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(15);
+   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(15);
 
 //   auto id = s.get_id();
 //   s.recive_frame(callback_function, ucan_stepper::status_frame_id);
@@ -99,7 +99,7 @@ TEST_CASE("Scan for devices", "[rx]"){
 
     REQUIRE(ucan_tools::active_devices.size() == 0);
 
-    system("canplayer -I ./candump_p257_s1025 -t -g 10 -l3 &");
+    system("canplayer -I ./candump_p257_s1025 -t -g 100 -l3 &");
     ucan_tools::scan_for_devices(5);
 
     REQUIRE(ucan_tools::active_devices.size() == 1);
