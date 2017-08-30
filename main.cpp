@@ -80,19 +80,19 @@ void callback_function(can_frame *buffer)
 TEST_CASE("Recive CAN Frame", "[rx]"){
    ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(15);
 
-//   auto id = s.get_id();
-//   s.recive_frame(callback_function, ucan_stepper::status_frame_id);
-//   counter = 0;
-//   system("canplayer -I ./candump_p257_s1025 -t -g 100 -l4");
+   auto id = s.get_id();
+   s.recive_frame(callback_function, ucan_stepper::status_frame_id);
+   counter = 0;
+   system("canplayer -I ./candump_p257_s1025 -t -g 100 -l4");
 
-//   std::this_thread::sleep_for(100ms);
+   std::this_thread::sleep_for(100ms);
 
-//   REQUIRE(counter == 4);
-//   REQUIRE(status1.sensors.Speed == 0x00000401);
-//   REQUIRE(status1.sensors.Position == 0x00000101);
-//   REQUIRE(status_id.id == 15);
-//   REQUIRE(status_id.type == MOTOR_DRIVER_ID_STEPPER);
-//   REQUIRE(status_id.frame_type == MOTOR_CONTROL_FRAME_ID);
+   REQUIRE(counter == 4);
+   REQUIRE(status1.sensors.Speed == 0x00000401);
+   REQUIRE(status1.sensors.Position == 0x00000101);
+   REQUIRE(status_id.id == 15);
+   REQUIRE(status_id.type == MOTOR_DRIVER_ID_STEPPER);
+   REQUIRE(status_id.frame_type == MOTOR_CONTROL_FRAME_ID);
 }
 
 TEST_CASE("Scan for devices", "[rx]"){

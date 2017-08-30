@@ -1,6 +1,7 @@
 #ifndef UCAN_CAN_INTERFACE_H
 #define UCAN_CAN_INTERFACE_H
 
+#include <fcntl.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
 #include <mutex>
@@ -18,24 +19,20 @@ private:
   std::unique_ptr<std::mutex> socket_mutex; // protects socket write
 
 public:
-//  ~ucan_can_interface()
-//  {
-////      close(interface_id);
-//  }
+  ucan_can_interface(ucan_can_interface &&) = default;
+  ~ucan_can_interface() { close(interface_id); }
 
   ucan_can_interface(const char *ifname) {
 
     socket_mutex = std::make_unique<std::mutex>();
 
+    struct sockaddr_can addr;
+    struct ifreq ifr;
 
-      struct sockaddr_can addr;
-      struct ifreq ifr;
-
-      if ((interface_id =
-               socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
-        printf("Error while opening socket");
-        return;
-
+    if ((interface_id = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
+      printf("Error while opening socket");
+      return;
+    }
 
       strcpy(ifr.ifr_name, ifname);
       ioctl(interface_id, SIOCGIFINDEX, &ifr);
@@ -43,15 +40,14 @@ public:
       addr.can_family = AF_CAN;
       addr.can_ifindex = ifr.ifr_ifindex;
 
-      printf("%s at index %d\n", ifname, ifr.ifr_ifindex);
+      printf("%s at index %d\n\r", ifname, ifr.ifr_ifindex);
 
-      if (bind(interface_id, (struct sockaddr *)&addr,
-               sizeof(addr)) < 0) {
+      if (bind(interface_id, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         printf("Error in socket bind");
         return;
       }
     }
-  }
+
 
   uint8_t can_rx(can_frame *frame_rd) {
 
@@ -72,24 +68,21 @@ public:
     return -1;
   }
 
-
-  void set_filter(canid_t id, canid_t mask)
-  {
-      //Add new filter on can-id 0x123
-        struct can_filter rfilter[1];
-      //   rfilter[0].can_id   = 0x80000123;
-         rfilter[0].can_id   = id;
-         rfilter[0].can_mask = mask;
-         setsockopt(interface_id, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+  void set_filter(canid_t id, canid_t mask) {
+    // Add new filter on can-id 0x123
+    struct can_filter rfilter[1];
+    //   rfilter[0].can_id   = 0x80000123;
+    rfilter[0].can_id = id;
+    rfilter[0].can_mask = mask;
+    setsockopt(interface_id, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter,
+               sizeof(rfilter));
   }
-
 
   void can_send(can_frame frame) {
     int nbytes;
     frame.can_id |= CAN_EFF_FLAG;
     socket_mutex.get()->lock();
-    nbytes = write(interface_id, &frame,
-                   sizeof(struct can_frame));
+    nbytes = write(interface_id, &frame, sizeof(struct can_frame));
     //    printf("Wrote %d bytes\n", nbytes);
     //    return nbytes;
     socket_mutex.get()->unlock();
