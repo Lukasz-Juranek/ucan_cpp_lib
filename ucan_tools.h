@@ -28,15 +28,20 @@ public:
            if (can_sock.can_rx(&buffer) == 1)
            {
 
-               uCANnetID map_id;
+               uCANnetID map_id, data;
                map_id.whole =  buffer.can_id;
-               printf("SCAN_id %08x \n\r", map_id.whole);
+//               printf("SCAN_id %08x \n\r", map_id.whole);
                map_id.frame_type = 0;
                map_id.group = 0;
                map_id.mcast = 0;
                map_id.unused = 0;
 
-               ucan_tools::active_devices[map_id.whole] = {buffer.can_id, time(0)};
+               time_t  timev;
+               time(&timev);
+
+               data.whole = buffer.can_id;
+
+               ucan_tools::active_devices[map_id.whole] = {data, timev};
            }
 //           std::this_thread::sleep_for(1ms);
            scantime_ms --;

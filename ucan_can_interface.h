@@ -40,7 +40,7 @@ public:
       addr.can_family = AF_CAN;
       addr.can_ifindex = ifr.ifr_ifindex;
 
-      printf("%s at index %d\n\r", ifname, ifr.ifr_ifindex);
+//      printf("%s at index %d\n\r", ifname, ifr.ifr_ifindex);
 
       if (bind(interface_id, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         printf("Error in socket bind");
