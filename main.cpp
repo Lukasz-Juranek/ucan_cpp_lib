@@ -15,6 +15,9 @@ using namespace std::chrono;
 using namespace std::chrono_literals;
 
 TEST_CASE("uCAN Stepper driver creation", "[stepper]") {
+
+  ucan_can_interface::set_interface_name("vcan0");
+
   ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(7);
   REQUIRE(s.get_id().id == 7);
 }

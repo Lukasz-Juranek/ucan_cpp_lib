@@ -22,7 +22,7 @@ public:
 
     static void scan_for_devices(int scantime_ms){
         can_frame buffer;
-        ucan_can_interface can_sock = ucan_can_interface("vcan0");
+        ucan_can_interface can_sock = ucan_can_interface(ucan_can_interface::interface_name);
         while (scantime_ms)
         {
            if (can_sock.can_rx(&buffer) == 1)

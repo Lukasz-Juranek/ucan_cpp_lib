@@ -114,7 +114,7 @@ void ucan_commands_manager<T>::rx_data(
     uCANnetID device_id, void (*callback_function)(can_frame *buffer),bool *stop)
 {
      can_frame buffer;
-     ucan_can_interface can_sock = ucan_can_interface("vcan0");
+     ucan_can_interface can_sock = ucan_can_interface(ucan_can_interface::interface_name);
      can_sock.set_filter(device_id.whole,CAN_EFF_MASK);
      while (1)
      {
@@ -136,7 +136,7 @@ template <class T>
 void ucan_commands_manager<T>::manage_commands(
     uCANnetID device_id, std::deque<Iucan_sendable> command_queue) {
 
-  ucan_can_interface can_sock = ucan_can_interface("vcan0");
+  ucan_can_interface can_sock = ucan_can_interface(ucan_can_interface::interface_name);
   while (command_queue.size() > 0) {
 
     auto f = command_queue[0];

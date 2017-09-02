@@ -9,6 +9,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <stdlib.h>
 
 #include "ucan_commands_manager.h"
 
@@ -19,6 +20,21 @@ private:
   std::unique_ptr<std::mutex> socket_mutex; // protects socket write
 
 public:
+
+  static char *interface_name;
+  static void set_interface_name(const char * interface)
+  {
+      if (ucan_can_interface::interface_name != nullptr)
+        free(ucan_can_interface::interface_name);
+      ucan_can_interface::interface_name = (char*)malloc(strlen(interface));
+      memcpy(ucan_can_interface ::interface_name, interface, strlen(interface));
+  }
+
+  const char* get_interface_name()
+  {
+      return ucan_can_interface::interface_name;
+  }
+
   ucan_can_interface(ucan_can_interface &&) = default;
   ~ucan_can_interface() { close(interface_id); }
 
@@ -88,5 +104,7 @@ public:
     socket_mutex.get()->unlock();
   }
 };
+
+char *ucan_can_interface::interface_name = nullptr;
 
 #endif // UCAN_CAN_INTERFACE_H
