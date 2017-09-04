@@ -185,3 +185,45 @@ TEST_CASE("Two devices reception", "[rx]"){
     REQUIRE(counter2 > 0);
     REQUIRE(counter > 0);
 }
+
+
+
+void test_callback_function(can_frame *buffer)
+{
+    memcpy(&status1,buffer->data,sizeof(CAN_MAX_DLEN));
+    status_id.whole = buffer->can_id;
+    counter ++;
+
+    printf("CAN_ID type %08x \n\r", status_id.type);
+    printf("CAN_ID id %08x \n\r", status_id.id);
+    printf("CAN_ID frame_type %08x \n\r", status_id.frame_type);
+    printf("CAN_ID %08x \n\r", buffer->can_id);
+
+    printf("STEPPER_SPEED %08x, POSITION %08x \n\r", status1.sensors.Speed, status1.sensors.Position);
+}
+
+
+//TEST_CASE("excercise", "[rx]"){
+
+//  uint8_t found_id = 0;
+//  ucan_can_interface::set_interface_name("slcan0");
+//  ucan_tools::scan_for_devices(5);
+
+//  std::cout << "List scan devices" << std::endl;
+//  for (const auto& kv : ucan_tools::active_devices) {
+//      std::cout << kv.second.activity_time << " -- " << kv.second.id.id << std::endl;
+//      found_id = kv.second.id.id;
+//  }
+
+//  if (found_id != 0)
+//  {
+//      ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(found_id);
+
+//      auto id = s.get_id();
+//      s.recive_frame(test_callback_function, ucan_stepper::status_frame_id);
+//      counter = 0;
+
+//      std::this_thread::sleep_for(1000ms);
+//  }
+
+}
