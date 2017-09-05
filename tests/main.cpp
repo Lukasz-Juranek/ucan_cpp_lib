@@ -203,27 +203,3 @@ void test_callback_function(can_frame *buffer)
 }
 
 
-//TEST_CASE("excercise", "[rx]"){
-
-//  uint8_t found_id = 0;
-//  ucan_can_interface::set_interface_name("slcan0");
-//  ucan_tools::scan_for_devices(5);
-
-//  std::cout << "List scan devices" << std::endl;
-//  for (const auto& kv : ucan_tools::active_devices) {
-//      std::cout << kv.second.activity_time << " -- " << kv.second.id.id << std::endl;
-//      found_id = kv.second.id.id;
-//  }
-
-//  if (found_id != 0)
-//  {
-//      ucan_device<ucan_stepper> s = ucan_device<ucan_stepper>(found_id);
-
-//      auto id = s.get_id();
-//      s.recive_frame(test_callback_function, ucan_stepper::status_frame_id);
-//      counter = 0;
-
-//      std::this_thread::sleep_for(1000ms);
-//  }
-
-//}

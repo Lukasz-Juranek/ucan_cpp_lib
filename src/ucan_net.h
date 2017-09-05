@@ -1,6 +1,14 @@
 #ifndef UCAN_NET_H
 #define UCAN_NET_H
 
+#include <stdint.h>
+#include <string>
+#include <stdlib.h>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+
+
 typedef union {
   struct {
     uint32_t frame_type : 8; // [0-254] frame type, type specific

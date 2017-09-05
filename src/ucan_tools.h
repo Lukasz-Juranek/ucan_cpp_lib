@@ -9,6 +9,7 @@
 #include <linux/can.h>
 #include <vector>
 #include <ctime>
+#include <map>
 
 class ucan_tools{
 

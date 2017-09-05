@@ -10,6 +10,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
 
 #include "ucan_commands_manager.h"
 
