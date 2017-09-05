@@ -26,7 +26,7 @@ public:
   {
       if (ucan_can_interface::interface_name != nullptr)
         free(ucan_can_interface::interface_name);
-      ucan_can_interface::interface_name = (char*)malloc(strlen(interface));
+      ucan_can_interface::interface_name = (char*)calloc(strlen(interface),sizeof(*interface));
       memcpy(ucan_can_interface ::interface_name, interface, strlen(interface));
   }
 

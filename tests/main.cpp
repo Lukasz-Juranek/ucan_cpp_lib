@@ -1,9 +1,9 @@
 #define CATCH_CONFIG_MAIN // This tells Catch to provide a main() - only do this
                           // in one cpp file
 #include "catch.hpp"
-#include "ucan_line_motor.h"
-#include "ucan_stepper.h"
-#include "ucan_tools.h"
+#include "./../src/ucan_line_motor.h"
+#include "./../src/ucan_stepper.h"
+#include "./../src/ucan_tools.h"
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -226,4 +226,4 @@ void test_callback_function(can_frame *buffer)
 //      std::this_thread::sleep_for(1000ms);
 //  }
 
-}
+//}
