@@ -31,6 +31,30 @@ public:
     };
   } CANBrushedCMD1;
 
+  typedef struct tCANStatusFrame1 {
+    union {
+      struct {
+        union {
+          struct {
+            uint16_t Speed;
+            uint16_t Position;
+          };
+          uint32_t whole;
+        } sensors;
+
+        union {
+          struct {
+            uint32_t state : 3; // running, braking
+            uint32_t dir : 1;
+            uint32_t pwmValue : 16;
+          };
+          uint32_t whole;
+        } brushed;
+      };
+      uint8_t data[8];
+    };
+  } CANStatusFrame1;
+
   static const int driver_id = MOTOR_DRIVER_ID_LINE;
   static const int command_id = STEPPER_STEP_CMD__ID;
 
@@ -59,29 +83,7 @@ public:
 private:
   CANBrushedCMD1 CMD1Data;
 
-//    typedef struct tCANStatusFrame1 {
-//      union {
-//        struct {
-//          union {
-//            struct {
-//              uint16_t Speed;
-//              uint16_t Position;
-//            };
-//            uint32_t whole;
-//          } sensors;
 
-//          union {
-//            struct {
-//              uint32_t state : 3; // running, braking
-//              uint32_t dir : 1;
-//              uint32_t pwmValue : 16;
-//            };
-//            uint32_t whole;
-//          } brushed;
-//        };
-//        uint8_t data[8];
-//      };
-//    } CANStatusFrame1;
 };
 
 #endif // UCAN_LINE_MOTOR_H
