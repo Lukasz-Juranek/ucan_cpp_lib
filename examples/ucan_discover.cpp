@@ -65,12 +65,13 @@ int main(int argc,     // Number of strings in array argv
             std::cout << "," << std::endl;
         }
         first = false;
-        std::cout << "\t{\""
-                  << kv.second.activity_time
-                  << "\" , \""
-                  << kv.second.id.whole
-                  << "\"}";
-//        found_id = kv.second.id.id;
+        std::cout << "\t{\"" << kv.second.activity_time
+                  << "\" , \"" << kv.second.id.whole << "\""
+                  << "{"
+                  << " \"id\":\"" << kv.second.id.id<< "\","
+                  << " \"type\":\"" << kv.second.id.type<< "\","
+                  << " \"group\":\"" << kv.second.id.group<< "\"}"
+                  << "}";
       }
       std::cout << std::endl << "}" << std::endl;
   }

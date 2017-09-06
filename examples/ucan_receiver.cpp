@@ -10,7 +10,7 @@
 #include <vector>
 #include <cstdlib>
 
-using namespace std;
+using namespace std;\
 using namespace std::chrono;
 using namespace std::chrono_literals;
 
@@ -21,9 +21,9 @@ void callback_function(can_frame *buffer) {
 
   std::cout << "{" << std::endl;
   std::cout << "{" << std::endl;
-  std::cout << "\"id\" : \"" << status_id.id << "\"";
-  std::cout << "\"device_type\" : \"" << status_id.type << "\"";
-  std::cout << "\"frame_type\" : \"" << status_id.frame_type << "\"";
+  std::cout << "\"id\" : \"" << status_id.id << "\",";
+  std::cout << "\"device_type\" : \"" << status_id.type << "\",";
+  std::cout << "\"frame_type\" : \"" << status_id.frame_type << "\",";
   std::cout << "\"group\" : \"" << status_id.group << "\"";
   std::cout << std::endl << "}," << std::endl;
 
@@ -33,9 +33,9 @@ void callback_function(can_frame *buffer) {
         ucan_stepper::CANStatusFrame1 s1;
         memcpy(&s1, buffer->data, sizeof(CAN_MAX_DLEN));
         std::cout << "{" << std::endl;
-        std::cout << "\"sensors.Position\" : \"" << s1.sensors.Position << "\"";
-        std::cout << "\"sensors.Speed\" : \"" << s1.sensors.Speed<< "\"";
-        std::cout << "\"stepper.StepCount\" : \"" << s1.stepper.StepCount<< "\"";
+        std::cout << "\"sensors.Position\" : \"" << s1.sensors.Position << "\",";
+        std::cout << "\"sensors.Speed\" : \"" << s1.sensors.Speed<< "\",";
+        std::cout << "\"stepper.StepCount\" : \"" << s1.stepper.StepCount<< "\",";
         std::cout << "\"stepper.nowStepping\" : \"" << s1.stepper.nowStepping<< "\"";
         std::cout << "}" << std::endl;
         break;
@@ -86,7 +86,7 @@ int main(int argc,     // Number of strings in array argv
   const char *scan_interface = argv[1];
 
 
-  if (argc > 2) {
+  if (argc < 3) {
       std::cout << "uCAN devices reception utility, output is JSON format" << std::endl;
       std::cout << "usage: ucan_receiver CAN_INTERFACE UCAN_ID UCAN_TYPE ... [UCAN_TYPE can be STEPPER_MOTOR, LINE_MOTOR] " << std::endl;
       std::cout << "example: ucan_receiver vcan0 A7 STEPPER_MOTOR" << std::endl;
@@ -104,19 +104,21 @@ int main(int argc,     // Number of strings in array argv
 
 
       if (strcmp(device_type, "STEPPER_MOTOR") == 0) {
+          std::cout << "stepper add " << can_id << std::endl;
           ucan_device<ucan_stepper> * s = new ucan_device<ucan_stepper>(can_id);
-          s->recive_frame(callback_function, ucan_stepper::driver_id);
+          s->recive_frame(callback_function, ucan_stepper::status_frame_id);
           steppers.push_back(s);
       }
       if (strcmp(device_type, "LINE_MOTOR") == 0) {
+          std::cout << "line_add  " << can_id << std::endl;
           ucan_device<ucan_line_motor> * s = new ucan_device<ucan_line_motor>(can_id);
-          s->recive_frame(callback_function, ucan_line_motor::driver_id);
+          s->recive_frame(callback_function, ucan_stepper::status_frame_id);
           line.push_back(s);
       }
 
       while (1)
       {
-        std::this_thread::sleep_for(10s);
+        std::this_thread::sleep_for(100ms);
       }
   }
 }
