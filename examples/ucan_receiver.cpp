@@ -2,6 +2,7 @@
 #include "./../src/ucan_line_motor.h"
 #include "./../src/ucan_stepper.h"
 #include "./../src/ucan_tools.h"
+#include "./../src/json.hpp"
 #include <chrono>
 #include <iostream>
 #include <linux/can.h>
@@ -13,31 +14,45 @@
 using namespace std;\
 using namespace std::chrono;
 using namespace std::chrono_literals;
+using json = nlohmann::json;
+
 
 void callback_function(can_frame *buffer) {
 
   uCANnetID status_id;
   status_id.whole = buffer->can_id;
 
-  std::cout << "{" << std::endl;
-  std::cout << "{" << std::endl;
-  std::cout << "\"id\" : \"" << status_id.id << "\",";
-  std::cout << "\"device_type\" : \"" << status_id.type << "\",";
-  std::cout << "\"frame_type\" : \"" << status_id.frame_type << "\",";
-  std::cout << "\"group\" : \"" << status_id.group << "\"";
-  std::cout << std::endl << "}," << std::endl;
+  json j1 = {
+      {"id", {
+         {"whole", (uint32_t)status_id.id},
+         {"device_type", (uint32_t)status_id.type },
+         {"frame_type", (uint32_t)status_id.frame_type },
+         {"group", (uint32_t) status_id.group}
+       }
+      }
+  };
+
+  json j2;
 
   switch (status_id.type) {
     case  ucan_stepper::driver_id:
     {
         ucan_stepper::CANStatusFrame1 s1;
         memcpy(&s1, buffer->data, sizeof(CAN_MAX_DLEN));
-        std::cout << "{" << std::endl;
-        std::cout << "\"sensors.Position\" : \"" << s1.sensors.Position << "\",";
-        std::cout << "\"sensors.Speed\" : \"" << s1.sensors.Speed<< "\",";
-        std::cout << "\"stepper.StepCount\" : \"" << s1.stepper.StepCount<< "\",";
-        std::cout << "\"stepper.nowStepping\" : \"" << s1.stepper.nowStepping<< "\"";
-        std::cout << "}" << std::endl;
+
+        j2 = {
+            {
+             "sensors", {
+               {"Position", s1.sensors.Position },
+               {"Speed", s1.sensors.Speed  }
+             },
+              "stepper", {
+               {"StepCount", (uint32_t)s1.stepper.StepCount },
+               {"nowStepping", (uint32_t)s1.stepper.nowStepping}
+             }
+            }
+        };
+
         break;
     }
 
@@ -45,20 +60,28 @@ void callback_function(can_frame *buffer) {
     {
       ucan_line_motor::CANStatusFrame1 s1;
       memcpy(&s1, buffer->data, sizeof(CAN_MAX_DLEN));
-      std::cout << "{" << std::endl;
-      std::cout << "\"sensors.Position\" : \"" << s1.sensors.Position << "\"";
-      std::cout << "\"sensors.Speed\" : \"" << s1.sensors.Speed<< "\"";
-      std::cout << "\"brushed.dir\" : \"" << s1.brushed.dir<< "\"";
-      std::cout << "\"brushed.pwmValue\" : \"" << s1.brushed.pwmValue<< "\"";
-      std::cout << "\"brushed.state\" : \"" << s1.brushed.state<< "\"";
-      std::cout << "}" << std::endl;
+
+      j2 = {
+          {
+           "sensors", {
+             {"Position", s1.sensors.Position },
+             {"Speed", s1.sensors.Speed  }
+           },
+            "brushed", {
+             {"dir", (uint32_t)s1.brushed.dir },
+             {"pwmValue", (uint32_t)s1.brushed.pwmValue},
+             {"state", (uint32_t)s1.brushed.state}
+           }
+          }
+      };
+
       break;
     }
 
     default:
       break;
   }
-  std::cout << "}" << std::endl;
+  std::cout << j1.dump(4) << j2.dump(4) << std::endl;
 }
 
 std::vector<ucan_device<ucan_stepper>*>steppers;

@@ -2,6 +2,7 @@
 #include "./../src/ucan_line_motor.h"
 #include "./../src/ucan_stepper.h"
 #include "./../src/ucan_tools.h"
+#include "./../src/json.hpp"
 #include <chrono>
 #include <iostream>
 #include <linux/can.h>
@@ -11,6 +12,7 @@
 using namespace std;
 using namespace std::chrono;
 using namespace std::chrono_literals;
+using json = nlohmann::json;
 
 ucan_stepper::CANStatusFrame1 status1;
 uCANnetID status_id;
@@ -57,23 +59,24 @@ int main(int argc,     // Number of strings in array argv
       ucan_can_interface::set_interface_name(scan_interface);
       ucan_tools::scan_for_devices(scan_len);
 
-      std::cout << "{" << std::endl;
+      json result;
+
       for (const auto &kv : ucan_tools::active_devices)
       {
-        if (!first)
-        {
-            std::cout << "," << std::endl;
-        }
-        first = false;
-        std::cout << "\t{\"" << kv.second.activity_time
-                  << "\" , \"" << kv.second.id.whole << "\""
-                  << "{"
-                  << " \"id\":\"" << kv.second.id.id<< "\","
-                  << " \"type\":\"" << kv.second.id.type<< "\","
-                  << " \"group\":\"" << kv.second.id.group<< "\"}"
-                  << "}";
+          json j1 = {
+              {"timestamp", kv.second.activity_time},
+              {"id", {
+                 {"whole", kv.second.id.whole},
+                 {"id", kv.second.id.id},
+                 {"device_type", kv.second.id.type},
+                 {"group", kv.second.id.group}
+               }
+              },
+          };
+
+          result += j1;
       }
-      std::cout << std::endl << "}" << std::endl;
+      std::cout << result.dump(4) << std::endl;
   }
 }
 
