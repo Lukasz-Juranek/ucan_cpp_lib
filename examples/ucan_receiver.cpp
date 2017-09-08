@@ -32,7 +32,7 @@ void callback_function(can_frame *buffer) {
   switch (status_id.type) {
   case ucan_stepper::driver_id: {
     ucan_stepper::CANStatusFrame1 s1;
-    memcpy(&s1, buffer->data, sizeof(CAN_MAX_DLEN));
+    memcpy(&s1, buffer->data, CAN_MAX_DLEN);
 
     j2 = {{"sensors",
            {{"Position", s1.sensors.Position}, {"Speed", s1.sensors.Speed}},
@@ -45,7 +45,7 @@ void callback_function(can_frame *buffer) {
 
   case ucan_line_motor::driver_id: {
     ucan_line_motor::CANStatusFrame1 s1;
-    memcpy(&s1, buffer->data, sizeof(CAN_MAX_DLEN));
+    memcpy(&s1, buffer->data, CAN_MAX_DLEN);
 
     j2 = {{"sensors",
            {{"Position", s1.sensors.Position}, {"Speed", s1.sensors.Speed}},
