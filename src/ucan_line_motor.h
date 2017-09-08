@@ -11,6 +11,8 @@ public:
     motor_break,
   };
 
+  static const int status_frame_id = MOTOR_CONTROL_FRAME_ID;
+
   typedef struct tCANBrushCMD1 {
     union {
       struct {
