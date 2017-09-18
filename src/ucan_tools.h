@@ -17,6 +17,7 @@ public:
     struct device_table_entry {
         uCANnetID id;
         time_t activity_time;
+        can_frame frame;
     };
 
     static std::map <uint32_t,device_table_entry> active_devices;
@@ -42,7 +43,7 @@ public:
 
                data.whole = buffer.can_id;
 
-               ucan_tools::active_devices[map_id.whole] = {data, timev};
+               ucan_tools::active_devices[map_id.whole] = {data, timev, buffer};
            }
 //           std::this_thread::sleep_for(1ms);
            scantime_ms --;

@@ -13,3 +13,10 @@ add_executable(ucan_receiver
   ${ucan_receiver_SRCS}
 )
 
+set (ucan_scan_SRCS
+    ucan_scan_network.cpp
+)
+add_executable(ucan_scan_network
+  ${ucan_scan_SRCS}
+)
+
