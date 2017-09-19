@@ -20,3 +20,9 @@ add_executable(ucan_scan_network
   ${ucan_scan_SRCS}
 )
 
+set (ucan_sender_SRCS
+    ucan_sender.cpp
+)
+add_executable(ucan_sender
+  ${ucan_sender_SRCS}
+)
