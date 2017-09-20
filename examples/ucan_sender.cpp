@@ -31,6 +31,20 @@ int main(int argc,     // Number of strings in array argv
   const char *stirng_json = argv[2];
 
 
+
+
+  if (argc != 3) {
+    std::cout << "uCAN devices send utility, output is JSON format"
+              << std::endl;
+    std::cout << "usage: ucan_sender CAN_INTERFACE JSON_COMMAND"
+              << std::endl;
+    std::cout << "example: ucan_sender vcan0 \{\"id\":22,\"device_type\":\"STEPPER_MOTOR\",\"step_count\":20,\"step_size\":1,\"dir\":\"CLOCKWISE\"\}"
+              << std::endl;
+    // vcan0 \{\"id\":22,\"device_type\":\"LINE_MOTOR\",\"pwm\":220,\"dir\":\"CLOCKWISE\"\}
+    // vcan0 \{\"id\":22,\"device_type\":\"LINE_MOTOR\",\"position_control\":\"\",\"position\":500\}
+    return -1;
+  }
+
   try {
     input_json = json::parse(stirng_json);
 
@@ -40,14 +54,6 @@ int main(int argc,     // Number of strings in array argv
        return -1;
   }
 
-
-  if (argc != 3) {
-    std::cout << "uCAN devices send utility, output is JSON format"
-              << std::endl;
-    std::cout << "usage: ucan_sender CAN_INTERFACE JSON_COMMAND"
-              << std::endl;
-    std::cout << "example: ucan_sender vcan {\"id\": \"22\", \"type\": \"STEPPER_MOTOR\", \"dir\": CLOCKWISE}" << std::endl;
-  } else {
 
     ucan_can_interface::set_interface_name(scan_interface);
     can_frame buffer = {0};
@@ -100,7 +106,8 @@ int main(int argc,     // Number of strings in array argv
         } else {
             //direct control
             cmd.directControl.pwm = cast_required<std::uint32_t>("pwm");
-            cmd.directControl.breakingOn = cast_required<std::uint32_t>("breaking_on");
+            if (input_json.count("breaking_on")) // optional
+                cmd.directControl.breakingOn = cast_required<std::uint32_t>("breaking_on");
             auto str_dir = cast_required<std::string>("dir");
             if (str_dir  == "CLOCKWISE")
             {
@@ -114,7 +121,7 @@ int main(int argc,     // Number of strings in array argv
         memcpy(buffer.data,&cmd,CAN_MAX_DLEN);
         can_sock.can_send(buffer);
     }
-  }
+
 
   std::cout << "sendig finished" << endl;
 }

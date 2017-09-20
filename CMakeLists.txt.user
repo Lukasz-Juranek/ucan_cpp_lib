@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.5.1, 2017-09-19T08:20:10. -->
+<!-- Written by QtCreator 3.5.1, 2017-09-20T12:36:32. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -312,7 +312,7 @@
      <value type="int">14</value>
     </valuelist>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">ucan_scan_network</value>
-    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
+    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments">vcan0 10</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
@@ -362,7 +362,7 @@
      <value type="int">14</value>
     </valuelist>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">ucan_sender</value>
-    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments">vcan0 \{\&quot;id\&quot;:22,\&quot;device_type\&quot;:\&quot;STEPPER_MOTOR\&quot;,\&quot;step_count\&quot;:20,\&quot;step_size\&quot;:1,\&quot;dir\&quot;:\&quot;CLOCKWISE\&quot;\}</value>
+    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments">vcan0 \{\&quot;id\&quot;:22,\&quot;device_type\&quot;:\&quot;STEPPER_MOTOR\&quot;,\&quot;step_count\&quot;:210,\&quot;step_size\&quot;:1,\&quot;dir\&quot;:\&quot;CLOCKWISE\&quot;\}</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>

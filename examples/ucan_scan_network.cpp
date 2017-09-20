@@ -64,16 +64,22 @@ int main(int argc,     // Number of strings in array argv
             {
 
             case ucan_line_motor::driver_id:
-                ucan_line_motor::CANStatusFrame1 status;
-                memcpy(&status,buffer.data,CAN_MAX_DLEN);
-                j1 = PasreLine(map_id,status,timev);
-                std::cout << j1.dump(4) << std::endl;
+                if (map_id.frame_type == ucan_line_motor::status_frame_id)
+                {
+                    ucan_line_motor::CANStatusFrame1 status;
+                    memcpy(&status,buffer.data,CAN_MAX_DLEN);
+                    j1 = PasreLine(map_id,status,timev);
+                    std::cout << j1.dump(4) << std::endl;
+                }
                 break;
             case ucan_stepper::driver_id:
-                ucan_stepper::CANStatusFrame1 s2;
-                memcpy(&s2,buffer.data,CAN_MAX_DLEN);
-                j1 = PaseStepper(map_id, s2, timev);
-                std::cout << j1.dump(4) << std::endl;
+                if (map_id.frame_type == ucan_stepper::status_frame_id)
+                {
+                    ucan_stepper::CANStatusFrame1 s2;
+                    memcpy(&s2,buffer.data,CAN_MAX_DLEN);
+                    j1 = PaseStepper(map_id, s2, timev);
+                    std::cout << j1.dump(4) << std::endl;
+                }
                 break;
             default:
 //                j1 = {
