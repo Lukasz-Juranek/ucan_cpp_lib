@@ -96,7 +96,7 @@ int main(int argc,     // Number of strings in array argv
                  break;
             }
 
-            return 0;
+ //           return 0;
         }
     }
   }
